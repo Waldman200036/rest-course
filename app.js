@@ -10,7 +10,11 @@ const Book = require('./models/bookModel');
 
 bookRouter.route('/books')
   .get((req, res) => {
-    Book.find((err, books) => {
+    const query = {};
+    if (req.query) {
+      query.genre = req.query.genre;
+    }
+    Book.find(query, (err, books) => {
       if (err) {
         return res.send(err);
       }
@@ -19,6 +23,16 @@ bookRouter.route('/books')
     // res.json(response);
   });
 
+bookRouter.route('/books/:bookId')
+  .get((req, res) => {
+    Book.findById(req.params.bookId, (err, book) => {
+      if (err) {
+        return res.send(err);
+      }
+      return res.json(book);
+    });
+    // res.json(response);
+  });
 app.use('/api', bookRouter);
 
 app.get('/', (req, resp) => {
